@@ -95,23 +95,31 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-8 col-lg-9">
-
+            <div class="col-md-8 col-lg-9" id="main-area">
+                {% if post_list.exists %}
                 {% for p in post_list %}
                 <div class="card mb-4">
                     <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/dee2e6/6c757d.jpg"
                             alt="..." /></a>
                     <div class="card-body">
-                        <h2 class="card-title">{{p.title}}</h2>
-                        <p class="card-text">{{p.content}}</p>
+                        <h2 class="card-title">{{p.title | upper}}</h2>
+                        {% if p.hook_text %}
+                        <h5 class ="card-muted">{{p.hook_text}}</h5>
+                        {% endif %}
+
+                        <p class="card-text">{{p.content | truncatechars:100}}</p>
                         <a class="btn btn-primary" href="{{p.get_absolute_url}}">Read more →</a>
                     </div>
                     <div class="card-footer">
-                        <div class="small text-muted">{{p.created_at}}</div>
+                        <div class="small text-muted">{{p.created_at| date:"Y-m-d h:m:s"}}</div>
                         <a href="#"> 작성자 (추후 개발 예정) </a>
                     </div>
                 </div>
                 {% endfor %}
+
+                {% else %}
+                <h5> 아직 게시물이 없습니다. </h5>
+                {% endif %}
 
                 <!-- Pagination-->
                 <nav aria-label="Pagination">
@@ -148,7 +156,7 @@
                 <!-- Categories widget-->
                 <div class="card mb-4">
                     <div class="card-header">Categories</div>
-                    < class="card-body">
+                    <div class ="card-body">
                         <div class="row">
                             <div class="col-sm-6">
                                 <ul class="list-unstyled mb-0">

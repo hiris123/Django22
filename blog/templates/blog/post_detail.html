@@ -12,7 +12,8 @@
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{% static 'blog/bootstrap4/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" media="screen"> </link>
-        <link href="css/styles.css" rel="stylesheet" />
+        <link href="{% static 'blog/css/styles.css' %}" rel="stylesheet" />
+        <script src="https://kit.fontawesome.com/99618ecb15.js" crossorigin="anonymous"></script>
     </head>
     <body>
         <!-- Responsive navbar-->
@@ -39,9 +40,12 @@
                         <!-- Post header-->
                         <header class="mb-4">
                             <!-- Post title-->
-                            <h1 class="fw-bolder mb-1">{{post.title}}</h1>
+                            <h1 class="fw-bolder mb-1">{{post.title | lower}}</h1>
+                            {% if post.hook_text %}
+                            <h5 class="text-muted">{{post.hook_text}}</h5>
+                            {% endif %}
                             <!-- Post meta content-->
-                            <div class="text-muted fst-italic mb-2">Posted on {{post.created_at}} by 작성자(추후 개발 예정)</div>
+                            <div class="text-muted fst-italic mb-2">Posted on {{post.created_at | date:"Y-m-d h:m:s"}} by 작성자(추후 개발 예정)</div>
                             <!-- Post categories-->
                             <a class="badge bg-secondary text-decoration-none link-light" href="#!">Web Design</a>
                             <a class="badge bg-secondary text-decoration-none link-light" href="#!">Freebies</a>
@@ -51,7 +55,17 @@
                         <!-- Post content-->
                         <section class="mb-5">
                             <p class="fs-5 mb-4">{{post.content}}</p>
-                            
+                            {% if post.file_upload %}
+                            <a href="{{post.file_upload.url}}" class = "btn btn-outline-dark" role ="button" download> 
+                                {% if post.get_file_ext == 'xlsx' or post.get_file_ext == 'xls' %}
+                                <i class="fa-solid fa-file-excel"></i> 
+                                {% elif post.get_file_ext == 'docx' or post.get_file_ext == 'doc'%}
+                                <i class="fa-thin fa-file-word"></i>
+                                {% else %}
+                                <i class="fa-regular fa-file"></i>
+                                {% endif %}
+                                Download {{post.get_file_name}}</a>
+                            {% endif %}
                         </section>
                     </article>
                     <!-- Comments section-->
