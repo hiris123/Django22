@@ -99,8 +99,13 @@
                 {% if post_list.exists %}
                 {% for p in post_list %}
                 <div class="card mb-4">
-                    <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/dee2e6/6c757d.jpg"
-                            alt="..." /></a>
+                    {% if p.head_image  %}
+                    <img class="card-img-top" src="{{p.head_image.url}}"
+                            alt="{{p}}의 head_image" /></a>
+                    {% else %}
+                    <img class="card-img-top" src="https://picsum.photos/seed/{{p.pk}}800/200"
+                            alt="random image" /></a>
+                    {% endif %}
                     <div class="card-body">
                         <h2 class="card-title">{{p.title | upper}}</h2>
                         {% if p.hook_text %}
@@ -156,7 +161,11 @@
                 <!-- Categories widget-->
                 <div class="card mb-4">
                     <div class="card-header">Categories</div>
+<<<<<<< HEAD
                     <div class ="card-body">
+=======
+                    <div class="card-body">
+>>>>>>> e29d0cd0b06e226a0839689b8731669d43210c43
                         <div class="row">
                             <div class="col-sm-6">
                                 <ul class="list-unstyled mb-0">

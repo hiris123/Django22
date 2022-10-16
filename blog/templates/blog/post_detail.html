@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 {% load static %}
 <html lang="ko">
@@ -12,8 +11,12 @@
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{% static 'blog/bootstrap4/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" media="screen"> </link>
+<<<<<<< HEAD
         <link href="{% static 'blog/css/styles.css' %}" rel="stylesheet" />
         <script src="https://kit.fontawesome.com/99618ecb15.js" crossorigin="anonymous"></script>
+=======
+        <link href="blog/css/styles.css" rel="stylesheet" />
+>>>>>>> e29d0cd0b06e226a0839689b8731669d43210c43
     </head>
     <body>
         <!-- Responsive navbar-->
@@ -51,7 +54,13 @@
                             <a class="badge bg-secondary text-decoration-none link-light" href="#!">Freebies</a>
                         </header>
                         <!-- Preview image figure-->
-                        <figure class="mb-4"><img class="img-fluid rounded" src="https://dummyimage.com/900x400/ced4da/6c757d.jpg" alt="..." /></figure>
+                        <figure class="mb-4">
+                            {% if post.head_image %}
+                            <img class="img-fluid rounded" src="{{post.head_image.url}}" alt="{{post.title}}의 head_image" />
+                            {% else %}
+                            <img class="img-fluid rounded" src="https://picsum.photos/seed/{{post.pk}}800/200" alt="random image" />
+                            {% endif %}
+                        </figure>
                         <!-- Post content-->
                         <section class="mb-5">
                             <p class="fs-5 mb-4">{{post.content}}</p>
