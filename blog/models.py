@@ -26,7 +26,7 @@ class Post(models.Model):
         return f'/blog/{self.pk}/'
 
     def get_file_name(self):
-        return os.path.basename(self.file_upload_name)
+        return os.path.basename(self.file_upload.name)
 
     def get_file_ext(self):
         return self.get_file_name().split('.')[-1]  # a.b.text => a b text
