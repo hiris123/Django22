@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 import os
 
 # Create your models here.
@@ -17,10 +18,11 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # 추후 author 작성
+    # 추후 author 작성 user table에 등록되어 있는 것을 가져옴
+    author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL) #
 
     def __str__(self):
-        return f'[{self.pk}]{self.title}   {self.created_at}'
+        return f'[{self.pk}]{self.title}::{self.author} : {self.created_at}'
 
     def get_absolute_url(self):
         return f'/blog/{self.pk}/'
