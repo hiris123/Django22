@@ -1,6 +1,7 @@
 {% extends 'blog/base.html' %}
 {% block main_area %}
 
+<!-- {block head_title} 을 선언하지 않으면 자동으로 base.html에 있는 Blog 사용 -->
                 {% if post_list.exists %}
                 {% for p in post_list %}
                 <div class="card mb-4">
