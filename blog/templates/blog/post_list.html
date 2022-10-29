@@ -2,7 +2,11 @@
 {% block main_area %}
 
 <!-- {block head_title} 을 선언하지 않으면 자동으로 base.html에 있는 Blog 사용 -->
-                {% if post_list.exists %}
+<h1> blog {% if category %} <span class="badge bg-secondary float-end">{{ category }}</span>{% endif %}</h1>
+
+
+
+{% if post_list.exists %}
                 {% for p in post_list %}
                 <div class="card mb-4">
                     {% if p.head_image  %}
@@ -13,6 +17,11 @@
                             alt="random image" /></a>
                     {% endif %}
                     <div class="card-body">
+                        {% if p.category %}
+                        <span class="badge badge-secondary float-right">{{p.category}}</span>
+                        {% else %}
+                        <span class="badge badge-secondary float-right">미분류</span>
+                        {% endif %}
                         <h2 class="card-title">{{p.title | upper}}</h2>
                         {% if p.hook_text %}
                         <h5 class ="card-muted">{{p.hook_text}}</h5>
