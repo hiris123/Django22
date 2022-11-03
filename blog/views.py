@@ -10,6 +10,7 @@ class PostList(ListView):
     ordering = '-pk'
 
 
+
     def get_context_data(self, **kargs):
 
         context = super(PostList,self).get_context_data()
@@ -42,6 +43,8 @@ class PostDetail(DetailView):
 # def single_post_page(request, pk):
 #     post = Post.objects.get(pk=pk)
 #     return render(request, 'blog/single_post_page.html', {'post': post})
+
+# FBV로 작성하기
 
 def category_page(request,slug):
     category = Category.objects.get(slug=slug)

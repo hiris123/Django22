@@ -2,13 +2,15 @@
 {% block main_area %}
 
 <!-- {block head_title} 을 선언하지 않으면 자동으로 base.html에 있는 Blog 사용 -->
-<h1> blog {% if category %} <span class="badge bg-secondary float-end">{{ category }}</span>{% endif %}</h1>
+<!-- if문이 종료되는 시점에 꼭 endif를 써주어야 한다. -->
+
+                    <h1> blog {% if category %} <span class="badge badgg-secondary">{{ category }}</span>{% endif %}</h1>
 
 
 
 {% if post_list.exists %}
                 {% for p in post_list %}
-                <div class="card mb-4">
+                <div class="card mb-4" id="post-{{p.pk}}">
                     {% if p.head_image  %}
                     <img class="card-img-top" src="{{p.head_image.url}}"
                             alt="{{p}}의 head_image" /></a>
@@ -18,9 +20,14 @@
                     {% endif %}
                     <div class="card-body">
                         {% if p.category %}
-                        <span class="badge badge-secondary float-right">{{p.category}}</span>
+
+                        <span class="badge badge-secondary float-right">
+                            <a href="{{p.category.get_absolute_url}}">{{p.category}}</a></span>
                         {% else %}
-                        <span class="badge badge-secondary float-right">미분류</span>
+                        <span class="badge badge-secondary float-right">
+                            <a href="/blog/category/no_category/">
+                                미분류
+                        </a></span>
                         {% endif %}
                         <h2 class="card-title">{{p.title | upper}}</h2>
                         {% if p.hook_text %}

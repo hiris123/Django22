@@ -108,9 +108,8 @@ class TestView(TestCase):
 
 
     def test_post_detail(self):
-        post_001= Post.objects.create(title="첫번째 포스트", content="첫번째 포스트 입니다.",
-                                       author=self.user_kim)
-        self.assertEqual(post_001.get_absolute_url(), '/blog/4/')
+
+        self.assertEqual(self.post_001.get_absolute_url(), '/blog/1/')
 
         response = self.client.get(
             post_001.get_absolute_url(),  follow=True)  # '/blog/1'
@@ -125,11 +124,11 @@ class TestView(TestCase):
         post_area = main_area.find('div', id="post-area")
 
 
-        self.assertIn(post_001.title,   post_area.text)
-        self.assertIn(post_001.title, soup.title.text)
-        self.assertIn(post_001.content, post_area.text)
-        self.assertIn(post_001.author.username.upper(), post_area.text)
+        self.assertIn(self.post_001.title,   post_area.text)
+        self.assertIn(self.post_001.title, soup.title.text)
+        self.assertIn(self.post_001.content, post_area.text)
+        self.assertIn(self/post_001.author.username.upper(), post_area.text)
 
         # title에 대한 포스트에 있나
-        self.assertIn(post_001.title, soup.title.text)
+        self.assertIn(self.post_001.title, soup.title.text)
 
