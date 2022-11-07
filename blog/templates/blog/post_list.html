@@ -7,10 +7,10 @@
 
         <h2> blog
             {% if category %}
-            <span class="badge badgg-secondary">{{ category }}</span>
+            <span class="badge badge-secondary">{{ category }}</span>
             {% endif %}
             {% if tag %}
-            - <i class="fas fa-tag"></i>
+            - <i class="fas fa-tags"></i>
             <span class="badge badge-secondary">
                 {{tag}} ({{tag.post_set.count}})
             </span>
@@ -47,8 +47,8 @@
                         <p class="card-text">{{p.content | truncatechars:100}}</p>
 
                         {% if p.tags.exists %}
-                        <i class="fas fa-tags"></i>
-                            {% for tag in p.tags.iterator %}
+                        <i class="fas fa-tag"></i>
+                            {% for t in p.tags.iterator %}
                              <a href="{{t.get_absolute_url}}">
                                  <span class="badge badge-pill badge-light">{{t}} </span>
                             </a>

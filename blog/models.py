@@ -51,7 +51,7 @@ class Post(models.Model):
 
     # Post 모델에 category 필드 추가하기 ( 관리자 페이지에서 카테고리를 빈 칸으로 지정할 수 있게 된다. )
     category=models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL) # 카테고리를 빈칸으로 두기 (blank = True)
-    tags = models.ManyToManyField(Tag,  blank=True)
+    tags = models.ManyToManyField(Tag, blank=True)
 
 
 
