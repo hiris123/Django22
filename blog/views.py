@@ -1,9 +1,38 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Post,Category,Tag
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
 
 
 # Create your views here.
+class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Post
+    fields = ['title', 'hook_text', 'content', 'head_image','file_upload','category']
+    #모델명_form.html
+
+    # 이벤트가 발생했을 자동적으로 해당 함수 호출 -->
+
+    def test_func(self):
+        return self.request.user.is_superuser or self.request.user.is_staff
+        # superuser냐 아니면 is_staff냐
+
+
+
+    def form_valid(self,form):
+        current_user = self.request.user
+        if current_user.is_authenticated and (current_user.is_staff or current_user.is_superuser): #올바르게 인증된 유저일경우에만
+            form.instance.author = current_user
+            return super(PostCreate,self).form_valid(form)
+        else:
+            return redirect # 다시 url을 전달해서 목록 페이지를 전달하겠다.
+
+    def get_context_data(self, *, object_list=None,**kwargs):
+
+        context = super(PostCreate,self).get_context_data()
+        context['categories'] = Category.objects.all()
+        context['no_category_post_count'] = Post.objects.filter(category=None).count()
+        return context
 
 class PostList(ListView):
     model = Post
@@ -11,7 +40,7 @@ class PostList(ListView):
 
 
 
-    def get_context_data(self, **kargs):
+    def get_context_data(self, *, object_list=None,**kwargs): # 추가인자
 
         context = super(PostList,self).get_context_data()
         context['categories'] = Category.objects.all()
