@@ -3,13 +3,14 @@ from .models import Post,Category,Tag
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
+from django.utils.text import slugify
 
 
 # Create your views here.
 
 class PostUpdate(LoginRequiredMixin,UpdateView):
     model = Post
-    fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category','tags']
+    fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category'] # , tags 입력받은 형태로 하기 위해 tags를 지움
 
     # 모델명.html 특정한 템플릿을 지정해서 불러준다.
     template_name = 'blog/post_update_form.html'
@@ -18,15 +19,43 @@ class PostUpdate(LoginRequiredMixin,UpdateView):
             return super(PostUpdate,self).dispatch(request,*args,**kwargs)
         else:
             raise PermissionDenied
+
+
+    def form_valid(self,form):
+        response = super(PostUpdate,self).form_valid(form)
+        self.object.tags.clear()
+
+        tags_str = self.request.POST.get('tags_str')
+        if tags_str:
+            tags_str = tags_str.strip()  # 빈칸을 없애주는 명령어
+            tags_str = tags_str.replace(',', ';')
+            tags_list = tags_str.split(';')
+            for t in tags_list:
+                t = t.strip()
+                tag, is_tag_created = Tag.objects.get_or_create(name=t)  # 주어진 태그를 네임으로 하는 데 있으면 create, 없으면 get 한다.
+                if is_tag_created:  # 기존 태그 모델이 있을 경우
+                    tag.slug = slugify(t, allow_unicode=True)
+                    tag.save()
+                self.object.tags.add(tag)
+
+        return response
+
+
     def get_context_data(self, *, object_list=None,**kwargs):
 
         context = super(PostUpdate,self).get_context_data()
+        if self.object.tags.exists():
+            tags_str_list = list() # 빈 리스트를 하나 만든다.
+            for t in self.object.tags.all():
+                tags_str_list.append(t.name)
+            context['tags_str_default'] =';'.join(tags_str_list) # 포스트 연결에 되어있는 태그 모델들을 배열로 만드는 작업 필요
+
         context['categories'] = Category.objects.all()
         context['no_category_post_count'] = Post.objects.filter(category=None).count()
         return context
 class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Post
-    fields = ['title', 'hook_text', 'content', 'head_image','file_upload','category']
+    fields = ['title', 'hook_text', 'content', 'head_image','file_upload','category'] # 태그 입력 가능하게 변경 함 (tags 추가 안함 )
     #모델명_form.html
 
     # 이벤트가 발생했을 자동적으로 해당 함수 호출 -->
@@ -41,9 +70,26 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         current_user = self.request.user
         if current_user.is_authenticated and (current_user.is_staff or current_user.is_superuser): #올바르게 인증된 유저일경우에만
             form.instance.author = current_user
-            return super(PostCreate,self).form_valid(form)
+
+            response = super(PostCreate,self).form_valid(form)
+            tags_str = self.request.POST.get('tags_str') # POST 는 모델을 의미하는 게 아니라
+            # get 방식과 post 방식을 이용한 방식 (웹 동작에서 )
+
+            if tags_str:
+                tags_str = tags_str.strip() # 빈칸을 없애주는 명령어
+                tags_str = tags_str.replace(',',';')
+                tags_list = tags_str.split(';')
+                for t in tags_list:
+                    t = t.strip()
+                    tag, is_tag_created = Tag.objects.get_or_create(name=t) # 주어진 태그를 네임으로 하는 데 있으면 create, 없으면 get 한다.
+                    if is_tag_created: # 기존 태그 모델이 있을 경우
+                        tag.slug = slugify(t,allow_unicode=True)
+                        tag.save()
+                    self.object.tags.add(tag)
+
+            return response
         else:
-            return redirect # 다시 url을 전달해서 목록 페이지를 전달하겠다.
+            return redirect('/blog/') # 다시 url을 전달해서 목록 페이지를 전달하겠다.
 
     def get_context_data(self, *, object_list=None,**kwargs):
 

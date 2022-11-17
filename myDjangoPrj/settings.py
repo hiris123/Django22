@@ -39,9 +39,32 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'crispy_forms',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
     'blog',
     'single_pages'
 ]
+
+AUTHENTICATION_BACKENDS =(
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
+)
+
+SITE_ID = 1  # site 번호를 1번이라 준다.
+
+ACCOUNT_EMAIL_REQUIRED = True # email을 반드시 받도록 한다.
+ACCOUNT_EMAIL_VERIFICATION = 'none' # 이메일에 대한 검증작업은 따로 하지 않겠다.
+
+# 로그인을 할 때 버튼 눌러서 제일 먼저 보이는 페이지 등록 하는 것
+LOGIN_REDIRECT_URL = '/blog/'
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -121,6 +144,9 @@ USE_TZ = False
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '_media')
+
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
 # Default primary key field type
