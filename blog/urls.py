@@ -8,6 +8,7 @@ urlpatterns = [  # IP주소/blog/
     path('', views.PostList.as_view()),
     path('create_post/',views.PostCreate.as_view()),
     path('<int:pk>/', views.PostDetail.as_view()), # IP주소/blog/category/slug/
+    path('<int:pk>/new_comment/', views.new_comment),
     path('update_post/<int:pk>/',views.PostUpdate.as_view()), #IP주소/blog/update_post/slug/
     path('tag/<str:slug>/',views.tag_page),# IP주소/blog/tag/slug
 

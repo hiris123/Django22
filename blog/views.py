@@ -4,7 +4,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.utils.text import slugify
-
+from .forms import CommentForm
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -121,8 +122,10 @@ class PostDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(PostDetail,self).get_context_data()
         context['categories'] = Category.objects.all()
-        context['no_category_post_count'] = Post.objects.filter(category=None).count() # 특정 조건인 레코드만 필터리
+        context['no_category_post_count'] = Post.objects.filter(category=None).count # 특정 조건인 레코드만 필터리
+        context['comment_form'] = CommentForm
         return context
+
 
     # 템플릿은 모델명_detail.html : post_detail.html
     # 매개변수 모델명 : post
@@ -136,6 +139,27 @@ class PostDetail(DetailView):
 # def single_post_page(request, pk):
 #     post = Post.objects.get(pk=pk)
 #     return render(request, 'blog/single_post_page.html', {'post': post})
+
+def new_comment(request,pk):
+    if request.user.is_authenticated:
+        post = get_object_or_404(Post,pk=pk) # POST를 가져온다.
+
+        if request.method == 'POST': # submit 버튼을 클릭하면 POST 방식으로 전달이 된다.
+            comment_form = CommentForm(request.POST)
+            if request.method == 'POST':
+                comment_form = CommentForm(request.POST) # POST 방식으로 서버에 요청이 들어왔다면
+                # POST 방식으로 들어온 정보를 CommentForm의 형태로 가져온다.
+                if comment_form.is_valid():
+                    comment = comment_form.save(commit=False)
+                    comment.post = post
+                    comment.author = request.user
+                    comment.save() # commnet라는 객체는 서버에 있는 모델에 저장이 된다.
+                    return redirect(post.get_absolute_url())
+        else: #GET으로 들어왔다면
+            return redirect(post.get_absolute_url())
+    else:
+        raise PermissionDenied
+
 
 # FBV로 작성하기
 
