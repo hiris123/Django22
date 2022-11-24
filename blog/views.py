@@ -6,6 +6,8 @@ from django.core.exceptions import PermissionDenied
 from django.utils.text import slugify
 from .forms import CommentForm
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
+
 
 # Create your views here.
 
@@ -99,6 +101,8 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         context['no_category_post_count'] = Post.objects.filter(category=None).count()
         return context
 
+
+
 class PostList(ListView):
     model = Post
     ordering = '-pk'
@@ -122,7 +126,7 @@ class PostDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(PostDetail,self).get_context_data()
         context['categories'] = Category.objects.all()
-        context['no_category_post_count'] = Post.objects.filter(category=None).count # 특정 조건인 레코드만 필터리
+        context['no_category_post_count'] = Post.objects.filter(category=None).count() # 특정 조건인 레코드만 필터리
         context['comment_form'] = CommentForm
         return context
 
@@ -159,6 +163,25 @@ def new_comment(request,pk):
             return redirect(post.get_absolute_url())
     else:
         raise PermissionDenied
+
+class PostSearch(PostList): # ListView 상속, post_list, post_list.html  자동으로 연결
+    paginate_by = None
+
+    def get_queryset(self):
+        q = self.kwargs['q']
+        post_list = Post.objects.filter(
+            Q(title_contains = q) | Q(tags__name__contains=q)
+
+        ).distinct() # 중복으로 가져온 요소가 있을 때 한 번만 나타나게 하기 위한 설정
+        return post_list
+
+    def get_context_data(self, **kwargs):
+        context = super(PostSearch, self).get_context_data()
+        q = self.kwargs['q']
+        context['search_info'] = f'Search:{q} ({self.get_queryset().count()})'
+
+        return context
+
 
 
 class CommentUpdate(LoginRequiredMixin, UpdateView):

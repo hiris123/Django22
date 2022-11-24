@@ -12,6 +12,7 @@ urlpatterns = [  # IP주소/blog/
     path('update_comment/<int:pk>/', views.CommentUpdate.as_view()),
     path('update_post/<int:pk>/',views.PostUpdate.as_view()), #IP주소/blog/update_post/slug/
     path('tag/<str:slug>/',views.tag_page),# IP주소/blog/tag/slug
+    path('search/<str:q>/', views.PostSearch.as_view()), #
 
 
 

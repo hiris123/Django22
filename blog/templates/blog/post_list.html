@@ -13,8 +13,11 @@
 <!-- if문이 종료되는 시점에 꼭 endif를 써주어야 한다. -->
 
         <h2> Blog
+            {% if search_info %}
+            <span class="badge badge-secondary">{{search_info}}</span>
+            {% endif %}
             {% if category %}
-            <span class="badge badge-secondary">{{ category }}</span>
+            <span class="badge badge-secondary">{{category}}</span>
             {% endif %}
             {% if tag %}
             - <i class="fas fa-tags"></i>
