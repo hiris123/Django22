@@ -170,7 +170,7 @@ class PostSearch(PostList): # ListView 상속, post_list, post_list.html  자동
     def get_queryset(self):
         q = self.kwargs['q']
         post_list = Post.objects.filter(
-            Q(title_contains = q) | Q(tags__name__contains=q)
+            Q(title__contains = q) | Q(tags__name__contains=q)
 
         ).distinct() # 중복으로 가져온 요소가 있을 때 한 번만 나타나게 하기 위한 설정
         return post_list
