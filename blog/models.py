@@ -74,6 +74,12 @@ class Post(models.Model):
     def get_file_ext(self):
         return self.get_file_name().split('.')[-1]  # a.b.text => a b text
 
+    def get_avatar_url(self):
+        if self.author.socialaccount_set.exists():
+            return self.author.socialaccount_set.first().get_avatar_url()
+        else:
+            return 'https://dummyimage.com/50x50/ced4da/6c757d.jpg'
+
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
